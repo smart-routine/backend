@@ -44,12 +44,13 @@ public class Category {
         return new Category(userId, categoryName, color);
     }
 
-    public void changeColor(CategoryColor color) {
-        this.color = color;
-    }
-
-    public void rename(String categoryName) {
-        this.categoryName = categoryName;
+    public void update(String categoryName, CategoryColor color) {
+        if (categoryName != null) {
+            this.categoryName = categoryName;
+        }
+        if (color != null) {
+            this.color = color;
+        }
     }
 
 }

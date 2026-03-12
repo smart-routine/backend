@@ -4,6 +4,8 @@ package com.smartroutine.category.service;
 import com.smartroutine.category.dto.CategoryCreateRequest;
 import com.smartroutine.category.dto.CategoryCreateResponse;
 import com.smartroutine.category.dto.CategoryReadResponse;
+import com.smartroutine.category.dto.CategoryUpdateRequest;
+import com.smartroutine.category.dto.CategoryUpdateResponse;
 import com.smartroutine.category.entity.Category;
 import com.smartroutine.category.mapper.CategoryMapper;
 import com.smartroutine.category.repository.CategoryRepository;
@@ -50,5 +52,13 @@ public class CategoryService {
         return CategoryMapper.toResponse(category);
     }
 
+    @Transactional
+    public CategoryUpdateResponse updateCategory(UUID id, UUID userId,  CategoryUpdateRequest request) {
+        Category category = categoryRepository.findByIdAndUserId(id, userId)
+            .orElseThrow(() -> new RuntimeException("category not found"));
 
+        category.update(request.getCategoryName(), request.getColor());
+
+        return CategoryMapper.toUpdateResponse(category);
+    }
 }

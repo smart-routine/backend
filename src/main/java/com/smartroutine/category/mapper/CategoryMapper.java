@@ -3,6 +3,7 @@ package com.smartroutine.category.mapper;
 import com.smartroutine.category.dto.CategoryCreateRequest;
 import com.smartroutine.category.dto.CategoryCreateResponse;
 import com.smartroutine.category.dto.CategoryReadResponse;
+import com.smartroutine.category.dto.CategoryUpdateResponse;
 import com.smartroutine.category.entity.Category;
 import java.util.UUID;
 
@@ -29,6 +30,12 @@ public class CategoryMapper {
         );
     }
 
-
+    public static CategoryUpdateResponse toUpdateResponse(Category category) {
+        return new CategoryUpdateResponse(
+            category.getId(),
+            category.getCategoryName(),
+            category.getColor()
+        );
+    }
 
 }
