@@ -2,6 +2,7 @@ package com.smartroutine.category.mapper;
 
 import com.smartroutine.category.dto.CategoryCreateRequest;
 import com.smartroutine.category.dto.CategoryCreateResponse;
+import com.smartroutine.category.dto.CategoryReadResponse;
 import com.smartroutine.category.entity.Category;
 import java.util.UUID;
 
@@ -11,9 +12,18 @@ public class CategoryMapper {
         return Category.of(userId, request.getCategoryName(), request.getColor());
     }
 
-    public static CategoryCreateResponse toResponse(Category category) {
+    public static CategoryCreateResponse toCreateResponse(Category category) {
         return new CategoryCreateResponse(
             category.getId(),
+            category.getCategoryName(),
+            category.getColor()
+        );
+    }
+
+    public static CategoryReadResponse toResponse(Category category) {
+        return new CategoryReadResponse(
+            category.getId(),
+            category.getUserId(),
             category.getCategoryName(),
             category.getColor()
         );
