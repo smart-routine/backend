@@ -3,9 +3,11 @@ package com.smartroutine.category.service;
 
 import com.smartroutine.category.dto.CategoryCreateRequest;
 import com.smartroutine.category.dto.CategoryCreateResponse;
+import com.smartroutine.category.dto.CategoryReadResponse;
 import com.smartroutine.category.entity.Category;
 import com.smartroutine.category.mapper.CategoryMapper;
 import com.smartroutine.category.repository.CategoryRepository;
+import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -30,7 +32,15 @@ public class CategoryService {
 
         Category savedCategory = categoryRepository.save(category);
 
-        return CategoryMapper.toResponse(savedCategory);
+        return CategoryMapper.toCreateResponse(savedCategory);
+    }
+
+    @Transactional(readOnly = true)
+    public List<CategoryReadResponse> readCategories(UUID userId) {
+        return categoryRepository.findAllByUserId(userId)
+            .stream()
+            .map(CategoryMapper::toResponse)
+            .toList();
     }
 
 
