@@ -3,7 +3,6 @@ package com.smartroutine.category.mapper;
 import com.smartroutine.category.dto.CategoryCreateRequest;
 import com.smartroutine.category.dto.CategoryCreateResponse;
 import com.smartroutine.category.entity.Category;
-import com.smartroutine.category.entity.CategoryColor;
 import java.util.UUID;
 
 public class CategoryMapper {
