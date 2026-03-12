@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -25,7 +26,6 @@ public class CategoryController {
 
     @PostMapping
     public ResponseEntity<CategoryCreateResponse> create(@RequestBody CategoryCreateRequest request) {
-
         CategoryCreateResponse response = categoryService.createCategory(TEST_USER_ID, request);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
@@ -33,10 +33,16 @@ public class CategoryController {
 
     @GetMapping
     public ResponseEntity<List<CategoryReadResponse>> readCategories() {
-
         List<CategoryReadResponse> responses = categoryService.readCategories(TEST_USER_ID);
 
         return ResponseEntity.ok(responses);
+    }
+
+    @GetMapping
+    public ResponseEntity<CategoryReadResponse> readCategory(@RequestParam UUID id) {
+        CategoryReadResponse response = categoryService.readCategory(id, TEST_USER_ID);
+
+        return ResponseEntity.ok(response);
     }
 
 

@@ -43,5 +43,12 @@ public class CategoryService {
             .toList();
     }
 
+    @Transactional(readOnly = true)
+    public CategoryReadResponse readCategory(UUID id,  UUID userId) {
+        Category category = categoryRepository.findByIdAndUserId(id, userId)
+            .orElseThrow(() -> new RuntimeException("category not found"));
+        return CategoryMapper.toResponse(category);
+    }
+
 
 }
