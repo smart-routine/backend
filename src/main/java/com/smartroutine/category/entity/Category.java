@@ -45,7 +45,7 @@ public class Category {
     }
 
     public void update(String categoryName, CategoryColor color) {
-        if (categoryName != null) {
+        if (categoryName != null && !categoryName.isBlank()) {
             this.categoryName = categoryName;
         }
         if (color != null) {
@@ -53,4 +53,7 @@ public class Category {
         }
     }
 
+    public void delete() {
+        // deleteAt(), deleteBy update 처리
+    }
 }

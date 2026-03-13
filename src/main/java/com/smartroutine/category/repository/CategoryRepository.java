@@ -12,7 +12,7 @@ public interface CategoryRepository extends JpaRepository<Category, UUID> {
 
     boolean existsByUserIdAndCategoryName(UUID userId, String categoryName);
 
-    List<Category> findAllByUserId(UUID userId);
+    List<Category> findAllByUserIdOrderByIdAsc(UUID userId);
 
-    Optional<Category> findByIdAndUserId(UUID id, UUID attr0);
+    Optional<Category> findByIdAndUserId(UUID userId, UUID id);
 }

@@ -3,6 +3,7 @@ package com.smartroutine.category.service;
 
 import com.smartroutine.category.dto.CategoryCreateRequest;
 import com.smartroutine.category.dto.CategoryCreateResponse;
+import com.smartroutine.category.dto.CategoryDeleteResponse;
 import com.smartroutine.category.dto.CategoryReadResponse;
 import com.smartroutine.category.dto.CategoryUpdateRequest;
 import com.smartroutine.category.dto.CategoryUpdateResponse;
@@ -39,26 +40,36 @@ public class CategoryService {
 
     @Transactional(readOnly = true)
     public List<CategoryReadResponse> readCategories(UUID userId) {
-        return categoryRepository.findAllByUserId(userId)
+        return categoryRepository.findAllByUserIdOrderByIdAsc(userId)
             .stream()
             .map(CategoryMapper::toResponse)
             .toList();
     }
 
     @Transactional(readOnly = true)
-    public CategoryReadResponse readCategory(UUID id,  UUID userId) {
-        Category category = categoryRepository.findByIdAndUserId(id, userId)
+    public CategoryReadResponse readCategory(UUID userId,  UUID id) {
+        Category category = categoryRepository.findByIdAndUserId(userId, id)
             .orElseThrow(() -> new RuntimeException("category not found"));
         return CategoryMapper.toResponse(category);
     }
 
     @Transactional
-    public CategoryUpdateResponse updateCategory(UUID id, UUID userId,  CategoryUpdateRequest request) {
-        Category category = categoryRepository.findByIdAndUserId(id, userId)
+    public CategoryUpdateResponse updateCategory(UUID userId, UUID id, CategoryUpdateRequest request) {
+        Category category = categoryRepository.findByIdAndUserId(userId, id)
             .orElseThrow(() -> new RuntimeException("category not found"));
 
         category.update(request.getCategoryName(), request.getColor());
 
         return CategoryMapper.toUpdateResponse(category);
+    }
+
+    @Transactional
+    public CategoryDeleteResponse deleteCategory(UUID userId, UUID id) {
+        Category category = categoryRepository.findByIdAndUserId(userId, id)
+            .orElseThrow(() -> new RuntimeException("category not found"));
+
+        category.delete();
+
+        return new CategoryDeleteResponse(userId, id);
     }
 }
