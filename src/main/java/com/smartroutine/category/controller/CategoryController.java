@@ -7,6 +7,7 @@ import com.smartroutine.category.dto.CategoryReadResponse;
 import com.smartroutine.category.dto.CategoryUpdateRequest;
 import com.smartroutine.category.dto.CategoryUpdateResponse;
 import com.smartroutine.category.service.CategoryService;
+import jakarta.validation.Valid;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -30,7 +31,7 @@ public class CategoryController {
     private static final UUID TEST_USER_ID = UUID.fromString("11111111-1111-1111-1111-111111111111");
 
     @PostMapping
-    public ResponseEntity<CategoryCreateResponse> create(@RequestBody CategoryCreateRequest request) {
+    public ResponseEntity<CategoryCreateResponse> create(@Valid @RequestBody CategoryCreateRequest request) {
         CategoryCreateResponse response = categoryService.createCategory(TEST_USER_ID, request);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
@@ -53,7 +54,7 @@ public class CategoryController {
     @PatchMapping("/{id}")
     public ResponseEntity<CategoryUpdateResponse> updateCategory(
         @PathVariable UUID id,
-        @RequestBody CategoryUpdateRequest request){
+        @Valid @RequestBody CategoryUpdateRequest request){
 
         CategoryUpdateResponse response = categoryService.updateCategory(id, TEST_USER_ID,  request);
 
