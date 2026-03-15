@@ -8,6 +8,8 @@ import com.smartroutine.category.dto.CategoryReadResponse;
 import com.smartroutine.category.dto.CategoryUpdateRequest;
 import com.smartroutine.category.dto.CategoryUpdateResponse;
 import com.smartroutine.category.entity.Category;
+import com.smartroutine.category.exception.CategoryAlreadyExistsException;
+import com.smartroutine.category.exception.CategoryNotFoundException;
 import com.smartroutine.category.mapper.CategoryMapper;
 import com.smartroutine.category.repository.CategoryRepository;
 import java.util.List;
@@ -22,6 +24,11 @@ public class CategoryService {
 
     private final CategoryRepository categoryRepository;
 
+    private Category getCategory(UUID id, UUID userId) {
+        return categoryRepository.findByIdAndUserId(id, userId)
+            .orElseThrow(() -> new CategoryNotFoundException(id));
+    }
+
     @Transactional
     public CategoryCreateResponse createCategory(UUID userId, CategoryCreateRequest request) {
 
@@ -30,7 +37,7 @@ public class CategoryService {
         // (userId, category) unique
         if(categoryRepository.existsByUserIdAndCategoryName(
             userId, category.getCategoryName())) {
-            throw new RuntimeException();
+            throw new CategoryAlreadyExistsException(category.getCategoryName());
         }
 
         Category savedCategory = categoryRepository.save(category);
@@ -47,16 +54,21 @@ public class CategoryService {
     }
 
     @Transactional(readOnly = true)
-    public CategoryReadResponse readCategory(UUID userId,  UUID id) {
-        Category category = categoryRepository.findByIdAndUserId(userId, id)
-            .orElseThrow(() -> new RuntimeException("category not found"));
+    public CategoryReadResponse readCategory(UUID id, UUID userId) {
+
+        Category category = getCategory(id, userId);
+
         return CategoryMapper.toResponse(category);
     }
 
     @Transactional
-    public CategoryUpdateResponse updateCategory(UUID userId, UUID id, CategoryUpdateRequest request) {
-        Category category = categoryRepository.findByIdAndUserId(userId, id)
-            .orElseThrow(() -> new RuntimeException("category not found"));
+    public CategoryUpdateResponse updateCategory(UUID id, UUID userId, CategoryUpdateRequest request) {
+
+        if(categoryRepository.existsByUserIdAndCategoryNameAndIdNot(userId, request.getCategoryName(), id)){
+            throw new CategoryAlreadyExistsException(request.getCategoryName());
+        }
+
+        Category category = getCategory(id, userId);
 
         category.update(request.getCategoryName(), request.getColor());
 
@@ -64,12 +76,11 @@ public class CategoryService {
     }
 
     @Transactional
-    public CategoryDeleteResponse deleteCategory(UUID userId, UUID id) {
-        Category category = categoryRepository.findByIdAndUserId(userId, id)
-            .orElseThrow(() -> new RuntimeException("category not found"));
+    public CategoryDeleteResponse deleteCategory( UUID id, UUID userId) {
+        Category category = getCategory(id, userId);
 
         category.delete();
 
-        return new CategoryDeleteResponse(userId, id);
+        return new CategoryDeleteResponse(id, userId);
     }
 }

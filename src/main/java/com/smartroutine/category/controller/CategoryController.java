@@ -45,7 +45,7 @@ public class CategoryController {
 
     @GetMapping("/{id}")
     public ResponseEntity<CategoryReadResponse> readCategory(@PathVariable UUID id) {
-        CategoryReadResponse response = categoryService.readCategory(TEST_USER_ID, id);
+        CategoryReadResponse response = categoryService.readCategory(id, TEST_USER_ID);
 
         return ResponseEntity.ok(response);
     }
@@ -55,14 +55,14 @@ public class CategoryController {
         @PathVariable UUID id,
         @RequestBody CategoryUpdateRequest request){
 
-        CategoryUpdateResponse response = categoryService.updateCategory(TEST_USER_ID,  id, request);
+        CategoryUpdateResponse response = categoryService.updateCategory(id, TEST_USER_ID,  request);
 
         return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<CategoryDeleteResponse> deleteCategory(@PathVariable UUID id) {
-        CategoryDeleteResponse response = categoryService.deleteCategory(TEST_USER_ID, id);
+        CategoryDeleteResponse response = categoryService.deleteCategory(id, TEST_USER_ID);
 
         return ResponseEntity.ok(response);
     }
