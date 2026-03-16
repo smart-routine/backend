@@ -5,11 +5,11 @@ import com.smartroutine.goal.dto.GoalCreateResponse;
 import com.smartroutine.goal.dto.GoalReadResponse;
 import com.smartroutine.goal.entity.Goal;
 import com.smartroutine.goal.exception.GoalAlreadyExistsException;
+import com.smartroutine.goal.exception.GoalNotFoundException;
 import com.smartroutine.goal.mapper.GoalMapper;
 import com.smartroutine.goal.repository.GoalRepository;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,6 +19,11 @@ import org.springframework.transaction.annotation.Transactional;
 public class GoalService {
 
     private final GoalRepository goalRepository;
+
+    private Goal getGoal(UUID goalId) {
+        return goalRepository.findById(goalId)
+            .orElseThrow(() -> new GoalNotFoundException(goalId));
+    }
 
     @Transactional
     public GoalCreateResponse createGoal(UUID userId, GoalCreateRequest request) {
@@ -43,5 +48,14 @@ public class GoalService {
             .map(GoalMapper::toReadResponse)
             .toList();
     }
+
+    @Transactional(readOnly = true)
+    public GoalReadResponse readGoal(UUID goalId) {
+        Goal goal = getGoal(goalId);
+
+        return GoalMapper.toReadResponse(goal);
+    }
+
+
 
 }
