@@ -1,12 +1,15 @@
 package com.smartroutine.goal.service;
 
-import com.smartroutine.category.exception.CategoryAlreadyExistsException;
 import com.smartroutine.goal.dto.GoalCreateRequest;
 import com.smartroutine.goal.dto.GoalCreateResponse;
+import com.smartroutine.goal.dto.GoalReadResponse;
 import com.smartroutine.goal.entity.Goal;
+import com.smartroutine.goal.exception.GoalAlreadyExistsException;
 import com.smartroutine.goal.mapper.GoalMapper;
 import com.smartroutine.goal.repository.GoalRepository;
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,12 +26,22 @@ public class GoalService {
 
         //(userId, categoryId, goalName) Unique
         if(goalRepository.existsByUserIdAndCategoryIdAndGoalName(userId, request.getCategoryId(), request.getGoalName())) {
-            throw new CategoryAlreadyExistsException(request.getGoalName());
+            throw new GoalAlreadyExistsException(request.getGoalName());
         }
 
         Goal saveGoal = goalRepository.save(goal);
 
-        return GoalMapper.toCreateResponse(userId, saveGoal);
+        return GoalMapper.toCreateResponse(saveGoal);
+    }
+
+    @Transactional(readOnly = true)
+    public List<GoalReadResponse> readGoals(UUID userId) {
+        List<Goal> goals = goalRepository.findAllByUserId(userId);
+
+        return goals
+            .stream()
+            .map(GoalMapper::toReadResponse)
+            .toList();
     }
 
 }

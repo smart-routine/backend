@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLRestriction;
 
 @Entity
-@Table(name="categories")
+@Table(name="category")
 @Getter
 @NoArgsConstructor
 @SQLRestriction("deleted_at IS NULL")
