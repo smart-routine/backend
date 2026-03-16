@@ -1,5 +1,6 @@
 package com.smartroutine.category.entity;
 
+import com.smartroutine.common.entity.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -12,12 +13,14 @@ import java.util.UUID;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLRestriction;
 
 @Entity
 @Table(name="categories")
 @Getter
 @NoArgsConstructor
-public class Category {
+@SQLRestriction("deleted_at IS NULL")
+public class Category extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -38,6 +41,7 @@ public class Category {
         this.userId = userId;
         this.categoryName = categoryName;
         this.color = color == null ? CategoryColor.BLUE : color;
+        super.create(userId);
     }
 
     public static Category of(UUID userId, String categoryName, CategoryColor color) {
@@ -51,9 +55,10 @@ public class Category {
         if (color != null) {
             this.color = color;
         }
+        super.update(userId);
     }
 
     public void delete() {
-        // deleteAt(), deleteBy update 처리
+        super.delete(userId);
     }
 }
