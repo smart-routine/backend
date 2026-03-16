@@ -1,0 +1,29 @@
+package com.smartroutine.goal.mapper;
+
+import com.smartroutine.goal.dto.GoalCreateRequest;
+import com.smartroutine.goal.dto.GoalCreateResponse;
+import com.smartroutine.goal.entity.Goal;
+import java.util.UUID;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+public class GoalMapper {
+
+    public static Goal toEntity(UUID userId, GoalCreateRequest request) {
+        return Goal.builder()
+            .userId(userId)
+            .categoryId(request.getCategoryId())
+            .goalName(request.getGoalName())
+            .goalStatus(request.getGoalStatus())
+            .priority(request.getPriority())
+            .startDate(request.getStartDate())
+            .endDate(request.getEndDate())
+            .build();
+    }
+
+    public static GoalCreateResponse toCreateResponse(UUID userId, Goal goal) {
+        return new GoalCreateResponse(goal.getGoalId(), goal.getUserId(), goal.getCategoryId(),
+            goal.getGoalName(), goal.getGoalStatus(), goal.getPriority(),
+            goal.getStartDate(), goal.getEndDate(), goal.getCreatedAt(), goal.getCreatedBy());
+    }
+
+}
