@@ -3,6 +3,8 @@ package com.smartroutine.goal.service;
 import com.smartroutine.goal.dto.GoalCreateRequest;
 import com.smartroutine.goal.dto.GoalCreateResponse;
 import com.smartroutine.goal.dto.GoalReadResponse;
+import com.smartroutine.goal.dto.GoalUpdateRequest;
+import com.smartroutine.goal.dto.GoalUpdateResponse;
 import com.smartroutine.goal.entity.Goal;
 import com.smartroutine.goal.exception.GoalAlreadyExistsException;
 import com.smartroutine.goal.exception.GoalNotFoundException;
@@ -54,6 +56,20 @@ public class GoalService {
         Goal goal = getGoal(goalId);
 
         return GoalMapper.toReadResponse(goal);
+    }
+
+    @Transactional
+    public GoalUpdateResponse updateGoal(UUID userId, UUID goalId, GoalUpdateRequest request) {
+        Goal goal = getGoal(goalId);
+
+        if(goalRepository.existsByUserIdAndCategoryIdAndGoalNameAndIdNot(userId, goal.getCategoryId(),request.getGoalName(), goalId)) {
+            throw new GoalAlreadyExistsException(request.getGoalName());
+        }
+
+        goal.update(request.getGoalName(), request.getGoalStatus(), request.getPriority(),
+            request.getStartDate(), request.getEndDate());
+
+        return GoalMapper.toupdateResponse(goal);
     }
 
 

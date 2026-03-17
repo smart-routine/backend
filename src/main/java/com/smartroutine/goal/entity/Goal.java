@@ -56,7 +56,7 @@ public class Goal extends BaseEntity {
         this.goalName = goalName;
         this.userId = userId;
         this.categoryId = categoryId;
-        this.goalStatus = goalStatus;
+        this.goalStatus = goalStatus; // default 처리 필요
         this.priority = priority;
         this.startDate = startDate;
         this.endDate = endDate;
@@ -65,6 +65,16 @@ public class Goal extends BaseEntity {
     }
 
     public void update(String goalName, GoalStatus goalStatus, Integer priority, LocalDate startDate, LocalDate endDate) {
+        if(goalName == null || goalName.isEmpty()) {
+            throw new IllegalArgumentException("goalName cannot be null or empty");
+        }
+
+        this.goalName = goalName;
+        this.goalStatus = goalStatus;
+        this.priority = priority;
+        this.startDate = startDate;
+        this.endDate = endDate;
+
         super.update(userId);
     }
 

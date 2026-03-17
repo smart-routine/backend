@@ -3,6 +3,7 @@ package com.smartroutine.goal.mapper;
 import com.smartroutine.goal.dto.GoalCreateRequest;
 import com.smartroutine.goal.dto.GoalCreateResponse;
 import com.smartroutine.goal.dto.GoalReadResponse;
+import com.smartroutine.goal.dto.GoalUpdateResponse;
 import com.smartroutine.goal.entity.Goal;
 import java.util.UUID;
 
@@ -28,6 +29,12 @@ public class GoalMapper {
 
     public static GoalReadResponse toReadResponse(Goal goal) {
         return new GoalReadResponse(goal.getGoalId(), goal.getUserId(), goal.getCategoryId(),
+            goal.getGoalName(), goal.getGoalStatus(), goal.getPriority(), goal.getStartDate(),
+            goal.getEndDate(), goal.getCreatedAt(), goal.getCreatedBy(), goal.getUpdatedAt(), goal.getUpdatedBy());
+    }
+
+    public static GoalUpdateResponse toupdateResponse(Goal goal) {
+        return new GoalUpdateResponse(goal.getGoalId(), goal.getUserId(), goal.getCategoryId(),
             goal.getGoalName(), goal.getGoalStatus(), goal.getPriority(), goal.getStartDate(),
             goal.getEndDate(), goal.getCreatedAt(), goal.getCreatedBy(), goal.getUpdatedAt(), goal.getUpdatedBy());
     }
