@@ -33,7 +33,7 @@ public class GoalMapper {
             goal.getEndDate(), goal.getCreatedAt(), goal.getCreatedBy(), goal.getUpdatedAt(), goal.getUpdatedBy());
     }
 
-    public static GoalUpdateResponse toupdateResponse(Goal goal) {
+    public static GoalUpdateResponse toUpdateResponse(Goal goal) {
         return new GoalUpdateResponse(goal.getGoalId(), goal.getUserId(), goal.getCategoryId(),
             goal.getGoalName(), goal.getGoalStatus(), goal.getPriority(), goal.getStartDate(),
             goal.getEndDate(), goal.getCreatedAt(), goal.getCreatedBy(), goal.getUpdatedAt(), goal.getUpdatedBy());

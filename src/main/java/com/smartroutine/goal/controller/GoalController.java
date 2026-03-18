@@ -2,6 +2,7 @@ package com.smartroutine.goal.controller;
 
 import com.smartroutine.goal.dto.GoalCreateRequest;
 import com.smartroutine.goal.dto.GoalCreateResponse;
+import com.smartroutine.goal.dto.GoalDeleteResponse;
 import com.smartroutine.goal.dto.GoalReadResponse;
 import com.smartroutine.goal.dto.GoalUpdateRequest;
 import com.smartroutine.goal.dto.GoalUpdateResponse;
@@ -12,6 +13,7 @@ import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -59,6 +61,14 @@ public class GoalController {
     ){
         GoalUpdateResponse response = goalService.updateGoal(TEST_USER_ID, goal_id, request);
 
+        return ResponseEntity.ok(response);
+    }
+
+    @DeleteMapping("/{goal_id}")
+    public ResponseEntity<GoalDeleteResponse> deleteGoal(
+        @PathVariable UUID goal_id
+    ){
+        GoalDeleteResponse response = goalService.deleteGoal(goal_id, TEST_USER_ID);
         return ResponseEntity.ok(response);
     }
 

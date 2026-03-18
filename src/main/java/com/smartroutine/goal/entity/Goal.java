@@ -1,6 +1,8 @@
 package com.smartroutine.goal.entity;
 
 import com.smartroutine.common.entity.BaseEntity;
+import com.smartroutine.goal.exception.GoalAccessDeniedException;
+import com.smartroutine.goal.exception.GoalAlreadyDeletedException;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -17,7 +19,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLRestriction;
 
 @Entity
-@Table(name="goal")
+@Table(name="goals")
 @Getter
 @NoArgsConstructor
 @SQLRestriction("deleted_at IS NULL")
@@ -51,8 +53,7 @@ public class Goal extends BaseEntity {
     private LocalDate endDate;
 
     @Builder
-    public Goal(UUID goalId, String goalName, UUID userId, UUID categoryId, GoalStatus goalStatus, Integer priority, LocalDate startDate, LocalDate endDate) {
-        this.goalId = goalId;
+    public Goal(String goalName, UUID userId, UUID categoryId, GoalStatus goalStatus, Integer priority, LocalDate startDate, LocalDate endDate) {
         this.goalName = goalName;
         this.userId = userId;
         this.categoryId = categoryId;
@@ -65,21 +66,26 @@ public class Goal extends BaseEntity {
     }
 
     public void update(String goalName, GoalStatus goalStatus, Integer priority, LocalDate startDate, LocalDate endDate) {
-        if(goalName == null || goalName.isEmpty()) {
-            throw new IllegalArgumentException("goalName cannot be null or empty");
-        }
-
-        this.goalName = goalName;
-        this.goalStatus = goalStatus;
-        this.priority = priority;
-        this.startDate = startDate;
-        this.endDate = endDate;
+        if(goalName != null && !goalName.isEmpty()) this.goalName = goalName;
+        if(goalStatus != null) this.goalStatus = goalStatus;
+        if(priority != null) this.priority = priority;
+        if(startDate != null) this.startDate = startDate;
+        if(endDate != null) this.endDate = endDate;
 
         super.update(userId);
     }
 
-    public void delete() {
+    public void delete(UUID userId) {
+        if(this.getDeletedAt() != null) {
+            throw new GoalAlreadyDeletedException(goalId);
+        }
         super.delete(userId);
+    }
+
+    public void validateOwner (UUID userId) {
+        if(!userId.equals(this.userId)) {
+            throw new GoalAccessDeniedException(goalId, userId);
+        }
     }
 
 }

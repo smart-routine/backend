@@ -14,10 +14,8 @@ public class GoalCreateRequest {
     @Size(min = 1, max = 50)
     private String goalName;
 
-    @NotBlank
     private UUID categoryId;
 
-    @NotBlank
     private GoalStatus goalStatus;
 
     private Integer priority;

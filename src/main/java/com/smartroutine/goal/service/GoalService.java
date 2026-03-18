@@ -2,6 +2,7 @@ package com.smartroutine.goal.service;
 
 import com.smartroutine.goal.dto.GoalCreateRequest;
 import com.smartroutine.goal.dto.GoalCreateResponse;
+import com.smartroutine.goal.dto.GoalDeleteResponse;
 import com.smartroutine.goal.dto.GoalReadResponse;
 import com.smartroutine.goal.dto.GoalUpdateRequest;
 import com.smartroutine.goal.dto.GoalUpdateResponse;
@@ -61,17 +62,27 @@ public class GoalService {
     @Transactional
     public GoalUpdateResponse updateGoal(UUID userId, UUID goalId, GoalUpdateRequest request) {
         Goal goal = getGoal(goalId);
+        goal.validateOwner(userId);
 
-        if(goalRepository.existsByUserIdAndCategoryIdAndGoalNameAndIdNot(userId, goal.getCategoryId(),request.getGoalName(), goalId)) {
+        if(goalRepository.existsByUserIdAndCategoryIdAndGoalNameAndGoalIdNot(userId, goal.getCategoryId(),request.getGoalName(), goalId)) {
             throw new GoalAlreadyExistsException(request.getGoalName());
         }
 
         goal.update(request.getGoalName(), request.getGoalStatus(), request.getPriority(),
             request.getStartDate(), request.getEndDate());
 
-        return GoalMapper.toupdateResponse(goal);
+        return GoalMapper.toUpdateResponse(goal);
     }
 
+    @Transactional
+    public GoalDeleteResponse deleteGoal(UUID goalId, UUID userId){
+        Goal goal = getGoal(goalId);
 
+        goal.validateOwner(userId);
+
+        goal.delete(userId);
+
+        return new GoalDeleteResponse(goalId, "success");
+    }
 
 }
