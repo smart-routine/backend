@@ -8,7 +8,6 @@ import lombok.Getter;
 @Getter
 public class CategoryUpdateRequest {
 
-    @NotBlank
     @Size(min = 1, max = 50)
     private String categoryName;
     private CategoryColor color;

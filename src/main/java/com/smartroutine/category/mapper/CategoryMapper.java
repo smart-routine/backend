@@ -7,7 +7,9 @@ import com.smartroutine.category.dto.CategoryUpdateResponse;
 import com.smartroutine.category.entity.Category;
 import java.util.UUID;
 
-public class CategoryMapper {
+public final class CategoryMapper {
+
+    private CategoryMapper() {}
 
     public static Category toEntity(UUID userId, CategoryCreateRequest request) {
         return Category.of(userId, request.getCategoryName(), request.getColor());

@@ -64,13 +64,13 @@ public class CategoryService {
     @Transactional
     public CategoryUpdateResponse updateCategory(UUID id, UUID userId, CategoryUpdateRequest request) {
 
-        if(categoryRepository.existsByUserIdAndCategoryNameAndIdNot(userId, request.getCategoryName(), id)){
+        Category category = getCategory(id, userId);
+
+        if(categoryRepository.existsByUserIdAndCategoryNameAndIdNot(userId, request.getCategoryName(), id)) {
             throw new CategoryAlreadyExistsException(request.getCategoryName());
         }
 
-        Category category = getCategory(id, userId);
-
-        category.update(request.getCategoryName(), request.getColor());
+            category.update(request.getCategoryName(), request.getColor());
 
         return CategoryMapper.toUpdateResponse(category);
     }
@@ -81,6 +81,6 @@ public class CategoryService {
 
         category.delete();
 
-        return new CategoryDeleteResponse(id, userId);
+        return new CategoryDeleteResponse(id, "success");
     }
 }

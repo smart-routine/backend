@@ -4,7 +4,7 @@ import java.util.UUID;
 
 public record CategoryDeleteResponse(
     UUID id,
-    UUID userId
+    String message
 ) {
 
 }
