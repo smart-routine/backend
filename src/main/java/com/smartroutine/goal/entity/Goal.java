@@ -3,6 +3,8 @@ package com.smartroutine.goal.entity;
 import com.smartroutine.common.entity.BaseEntity;
 import com.smartroutine.goal.exception.GoalAccessDeniedException;
 import com.smartroutine.goal.exception.GoalAlreadyDeletedException;
+import com.smartroutine.goal.exception.GoalDateInvalidException;
+import com.smartroutine.goal.exception.GoalNameInvalidException;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -54,10 +56,15 @@ public class Goal extends BaseEntity {
 
     @Builder
     public Goal(String goalName, UUID userId, UUID categoryId, GoalStatus goalStatus, Integer priority, LocalDate startDate, LocalDate endDate) {
+        this.validateDate(startDate, endDate);
+
+        if(goalName == null || goalName.isBlank()) {
+            throw new GoalNameInvalidException(goalName);
+        }
         this.goalName = goalName;
         this.userId = userId;
         this.categoryId = categoryId;
-        this.goalStatus = goalStatus; // default 처리 필요
+        this.goalStatus = (goalStatus != null) ? goalStatus : GoalStatus.ACTIVE;
         this.priority = priority;
         this.startDate = startDate;
         this.endDate = endDate;
@@ -66,7 +73,17 @@ public class Goal extends BaseEntity {
     }
 
     public void update(String goalName, GoalStatus goalStatus, Integer priority, LocalDate startDate, LocalDate endDate) {
-        if(goalName != null && !goalName.isEmpty()) this.goalName = goalName;
+        LocalDate newStartDate = (startDate != null) ? startDate : this.startDate;
+        LocalDate newEndDate = (endDate != null) ? endDate : this.endDate;
+
+        validateDate(newStartDate, newEndDate);
+
+        if(goalName != null) {
+            if(goalName.isBlank()) {
+                throw new GoalNameInvalidException(goalName);
+            }
+            this.goalName = goalName;
+        }
         if(goalStatus != null) this.goalStatus = goalStatus;
         if(priority != null) this.priority = priority;
         if(startDate != null) this.startDate = startDate;
@@ -85,6 +102,12 @@ public class Goal extends BaseEntity {
     public void validateOwner (UUID userId) {
         if(!userId.equals(this.userId)) {
             throw new GoalAccessDeniedException(goalId, userId);
+        }
+    }
+
+    private void validateDate(LocalDate startDate, LocalDate endDate) {
+        if(startDate != null && endDate != null && startDate.isAfter(endDate)) {
+            throw new GoalDateInvalidException(startDate, endDate);
         }
     }
 
