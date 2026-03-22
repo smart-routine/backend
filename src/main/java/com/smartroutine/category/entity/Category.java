@@ -1,5 +1,7 @@
 package com.smartroutine.category.entity;
 
+import com.smartroutine.category.exception.CategoryAlreadyDeletedException;
+import com.smartroutine.category.exception.CategoryNameInvalidException;
 import com.smartroutine.common.entity.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -39,6 +41,9 @@ public class Category extends BaseEntity {
     @Builder
     public Category(UUID userId, String categoryName, CategoryColor color) {
         this.userId = userId;
+        if(categoryName == null || categoryName.isBlank()){
+            throw new CategoryNameInvalidException(categoryName);
+        }
         this.categoryName = categoryName;
         this.color = color == null ? CategoryColor.BLUE : color;
         super.create(userId);
@@ -49,7 +54,10 @@ public class Category extends BaseEntity {
     }
 
     public void update(String categoryName, CategoryColor color) {
-        if (categoryName != null && !categoryName.isBlank()) {
+        if (categoryName != null) {
+            if(categoryName.isBlank()){
+                throw new CategoryNameInvalidException(categoryName);
+            }
             this.categoryName = categoryName;
         }
         if (color != null) {
@@ -59,6 +67,9 @@ public class Category extends BaseEntity {
     }
 
     public void delete() {
+        if(this.getDeletedAt() != null) {
+            throw new CategoryAlreadyDeletedException(id);
+        }
         super.delete(userId);
     }
 }
