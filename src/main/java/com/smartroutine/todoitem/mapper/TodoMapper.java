@@ -1,10 +1,9 @@
 package com.smartroutine.todoitem.mapper;
 
+import com.smartroutine.todoitem.dto.TodoReadResponse;
 import com.smartroutine.todoitem.dto.TodoCreateRequest;
 import com.smartroutine.todoitem.dto.TodoCreateResponse;
 import com.smartroutine.todoitem.entity.TodoItem;
-import com.smartroutine.todoitem.entity.TodoStatus;
-import java.time.LocalDate;
 import java.util.UUID;
 
 public class TodoMapper {
@@ -27,6 +26,14 @@ public class TodoMapper {
             todoItem.getUserId(), todoItem.getGoalId(), todoItem.getDuration(),
             todoItem.getStatus(), todoItem.getScheduledStartAt(), todoItem.getScheduledEndAt(),
             todoItem.getIsAi(), todoItem.getCreatedAt(), todoItem.getCreatedBy());
+    }
+
+    public static TodoReadResponse toReadResponse(TodoItem todoItem){
+        return new TodoReadResponse(todoItem.getTodoId(), todoItem.getTodoName(),
+            todoItem.getUserId(), todoItem.getGoalId(), todoItem.getDuration(),
+            todoItem.getStatus(), todoItem.getScheduledStartAt(), todoItem.getScheduledEndAt(),
+            todoItem.getIsAi(), todoItem.getCreatedAt(), todoItem.getCreatedBy(),
+            todoItem.getUpdatedAt(), todoItem.getUpdatedBy());
     }
 
 }
