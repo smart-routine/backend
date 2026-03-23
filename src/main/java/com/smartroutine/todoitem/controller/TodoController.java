@@ -3,15 +3,19 @@ package com.smartroutine.todoitem.controller;
 import com.smartroutine.todoitem.dto.TodoReadResponse;
 import com.smartroutine.todoitem.dto.TodoCreateRequest;
 import com.smartroutine.todoitem.dto.TodoCreateResponse;
+import com.smartroutine.todoitem.dto.TodoUpdateRequest;
+import com.smartroutine.todoitem.dto.TodoUpdateResponse;
 import com.smartroutine.todoitem.service.TodoService;
 import jakarta.validation.Valid;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.apache.tomcat.util.http.parser.TE;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -43,12 +47,23 @@ public class TodoController {
         return ResponseEntity.ok(responses);
     }
 
-    @GetMapping("/{goal_id}")
+    @GetMapping("/{goalId}")
     public ResponseEntity<List<TodoReadResponse>> getTodosByGoalId(
-        @PathVariable("goal_id") UUID goalId
+        @PathVariable UUID goalId
     ){
         List<TodoReadResponse> responses = todoService.getTodosByGoal(TEST_USER_ID, goalId);
         return ResponseEntity.ok(responses);
     }
+
+    @PatchMapping("/{todoId}")
+    public ResponseEntity<TodoUpdateResponse> updateTodo(
+        @PathVariable UUID todoId,
+        @Valid @RequestBody TodoUpdateRequest request
+    ){
+        TodoUpdateResponse response = todoService.updateTodo(todoId, TEST_USER_ID, request);
+
+        return ResponseEntity.ok(response);
+    }
+
 
 }

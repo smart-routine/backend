@@ -3,6 +3,8 @@ package com.smartroutine.todoitem.service;
 import com.smartroutine.todoitem.dto.TodoReadResponse;
 import com.smartroutine.todoitem.dto.TodoCreateRequest;
 import com.smartroutine.todoitem.dto.TodoCreateResponse;
+import com.smartroutine.todoitem.dto.TodoUpdateRequest;
+import com.smartroutine.todoitem.dto.TodoUpdateResponse;
 import com.smartroutine.todoitem.entity.TodoItem;
 import com.smartroutine.todoitem.exception.TodoDateInvalidException;
 import com.smartroutine.todoitem.mapper.TodoMapper;
@@ -54,4 +56,15 @@ public class TodoService {
             .toList();
     }
 
+    @Transactional
+    public TodoUpdateResponse updateTodo(UUID todoId, UUID userId, TodoUpdateRequest request){
+        TodoItem todoItem = todoRepository.findById(todoId)
+            .orElseThrow(); // exception 처리
+        // owner 검증
+        // request 검증
+        // 업데이트 메소드 : entity
+
+        // ( 다른 메서드에서 투두 상태 처리 하기 )
+        return null;
+    }
 }
