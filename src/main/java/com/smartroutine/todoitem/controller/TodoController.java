@@ -3,15 +3,16 @@ package com.smartroutine.todoitem.controller;
 import com.smartroutine.todoitem.dto.TodoReadResponse;
 import com.smartroutine.todoitem.dto.TodoCreateRequest;
 import com.smartroutine.todoitem.dto.TodoCreateResponse;
+import com.smartroutine.todoitem.dto.TodoStatusResponse;
 import com.smartroutine.todoitem.dto.TodoUpdateRequest;
 import com.smartroutine.todoitem.dto.TodoUpdateResponse;
+import com.smartroutine.todoitem.entity.TodoStatus;
 import com.smartroutine.todoitem.service.TodoService;
 import jakarta.validation.Valid;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
-import org.apache.tomcat.util.http.parser.TE;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -62,6 +63,15 @@ public class TodoController {
     ){
         TodoUpdateResponse response = todoService.updateTodo(todoId, TEST_USER_ID, request);
 
+        return ResponseEntity.ok(response);
+    }
+
+    @PatchMapping("/{todoId}/status")
+    public ResponseEntity<TodoStatusResponse> updateStatus(
+        @PathVariable UUID todoId,
+        @RequestParam TodoStatus status
+    ){
+        TodoStatusResponse response = todoService.updateStatus(todoId, TEST_USER_ID, status);
         return ResponseEntity.ok(response);
     }
 

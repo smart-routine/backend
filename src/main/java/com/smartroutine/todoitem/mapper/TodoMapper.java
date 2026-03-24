@@ -3,6 +3,8 @@ package com.smartroutine.todoitem.mapper;
 import com.smartroutine.todoitem.dto.TodoReadResponse;
 import com.smartroutine.todoitem.dto.TodoCreateRequest;
 import com.smartroutine.todoitem.dto.TodoCreateResponse;
+import com.smartroutine.todoitem.dto.TodoStatusResponse;
+import com.smartroutine.todoitem.dto.TodoUpdateResponse;
 import com.smartroutine.todoitem.entity.TodoItem;
 import java.util.UUID;
 
@@ -34,6 +36,26 @@ public class TodoMapper {
             todoItem.getStatus(), todoItem.getScheduledStartAt(), todoItem.getScheduledEndAt(),
             todoItem.getIsAi(), todoItem.getCreatedAt(), todoItem.getCreatedBy(),
             todoItem.getUpdatedAt(), todoItem.getUpdatedBy());
+    }
+
+    public static TodoUpdateResponse todoUpdateResponse(TodoItem todoItem){
+        return new TodoUpdateResponse(
+            todoItem.getTodoId(), todoItem.getTodoName(),
+            todoItem.getUserId(), todoItem.getGoalId(), todoItem.getDuration(),
+            todoItem.getStatus(), todoItem.getScheduledStartAt(), todoItem.getScheduledEndAt(),
+            todoItem.getIsAi(), todoItem.getCreatedAt(), todoItem.getCreatedBy(),
+            todoItem.getUpdatedAt(), todoItem.getUpdatedBy()
+        );
+    }
+
+    public static TodoStatusResponse todoStatusResponse(TodoItem todoItem){
+        return new TodoStatusResponse(
+            todoItem.getTodoId(), todoItem.getTodoName(),
+            todoItem.getUserId(), todoItem.getGoalId(), todoItem.getDuration(),
+            todoItem.getStatus(), todoItem.getScheduledStartAt(), todoItem.getScheduledEndAt(),
+            todoItem.getIsAi(), todoItem.getCreatedAt(), todoItem.getCreatedBy(),
+            todoItem.getUpdatedAt(), todoItem.getUpdatedBy()
+        );
     }
 
 }

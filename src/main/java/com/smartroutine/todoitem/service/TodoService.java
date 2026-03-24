@@ -3,10 +3,13 @@ package com.smartroutine.todoitem.service;
 import com.smartroutine.todoitem.dto.TodoReadResponse;
 import com.smartroutine.todoitem.dto.TodoCreateRequest;
 import com.smartroutine.todoitem.dto.TodoCreateResponse;
+import com.smartroutine.todoitem.dto.TodoStatusResponse;
 import com.smartroutine.todoitem.dto.TodoUpdateRequest;
 import com.smartroutine.todoitem.dto.TodoUpdateResponse;
 import com.smartroutine.todoitem.entity.TodoItem;
+import com.smartroutine.todoitem.entity.TodoStatus;
 import com.smartroutine.todoitem.exception.TodoDateInvalidException;
+import com.smartroutine.todoitem.exception.TodoNotFoundException;
 import com.smartroutine.todoitem.mapper.TodoMapper;
 import com.smartroutine.todoitem.repository.TodoRepository;
 import java.time.LocalDate;
@@ -21,6 +24,11 @@ import org.springframework.transaction.annotation.Transactional;
 public class TodoService {
 
     private final TodoRepository todoRepository;
+
+    private TodoItem getTodo(UUID todoId, UUID userId){
+        return todoRepository.findByTodoIdAndUserId(todoId, userId)
+            .orElseThrow(() -> new TodoNotFoundException(todoId));
+    }
 
     @Transactional
     public TodoCreateResponse createTodo(UUID userId, TodoCreateRequest request){
@@ -58,13 +66,19 @@ public class TodoService {
 
     @Transactional
     public TodoUpdateResponse updateTodo(UUID todoId, UUID userId, TodoUpdateRequest request){
-        TodoItem todoItem = todoRepository.findById(todoId)
-            .orElseThrow(); // exception 처리
-        // owner 검증
-        // request 검증
-        // 업데이트 메소드 : entity
+        TodoItem todoItem = getTodo(todoId, userId);
 
-        // ( 다른 메서드에서 투두 상태 처리 하기 )
-        return null;
+        todoItem.updateTodo(userId, request.getTodoName(), request.getDuration(), request.getScheduledStartAt());
+
+        return TodoMapper.todoUpdateResponse(todoItem);
+    }
+
+    @Transactional
+    public TodoStatusResponse updateStatus(UUID todoId, UUID userId, TodoStatus status){
+        TodoItem todoItem = getTodo(todoId, userId);
+
+        todoItem.updateStatus(status);
+
+        return TodoMapper.todoStatusResponse(todoItem);
     }
 }

@@ -72,4 +72,20 @@ public class TodoItem extends BaseEntity {
         super.create(userId);
     }
 
+    public void updateTodo(UUID userId, String todoName, Integer duration, LocalDate scheduledStartAt){
+        if(todoName != null && !todoName.isBlank()) this.todoName = todoName;
+        if(duration != null) this.duration = duration;
+        if(scheduledStartAt != null) this.scheduledStartAt = scheduledStartAt;
+
+        super.update(userId);
+    }
+
+    public void updateStatus(TodoStatus status){
+        if(status != null) this.status = status;
+
+        else if(this.status == TodoStatus.IN_PROGRESS) this.status = TodoStatus.PENDING;
+        else if(this.status == TodoStatus.PENDING) this.status = TodoStatus.COMPLETED;
+        else if(this.status == TodoStatus.COMPLETED) this.status = TodoStatus.PENDING;
+    }
+
 }
