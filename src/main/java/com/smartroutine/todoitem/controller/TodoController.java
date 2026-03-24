@@ -1,5 +1,6 @@
 package com.smartroutine.todoitem.controller;
 
+import com.smartroutine.todoitem.dto.TodoDeletedResponse;
 import com.smartroutine.todoitem.dto.TodoReadResponse;
 import com.smartroutine.todoitem.dto.TodoCreateRequest;
 import com.smartroutine.todoitem.dto.TodoCreateResponse;
@@ -15,6 +16,7 @@ import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -73,6 +75,13 @@ public class TodoController {
     ){
         TodoStatusResponse response = todoService.updateStatus(todoId, TEST_USER_ID, status);
         return ResponseEntity.ok(response);
+    }
+
+    @DeleteMapping("{todoId}")
+    public ResponseEntity<TodoDeletedResponse> deleteTodo(@PathVariable UUID todoId){
+
+        TodoDeletedResponse response = todoService.deleteTodo(todoId, TEST_USER_ID);
+        return  ResponseEntity.ok(response);
     }
 
 

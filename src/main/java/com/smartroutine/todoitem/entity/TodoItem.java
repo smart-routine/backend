@@ -1,6 +1,7 @@
 package com.smartroutine.todoitem.entity;
 
 import com.smartroutine.common.entity.BaseEntity;
+import com.smartroutine.todoitem.exception.TodoAlreadyDeletedException;
 import com.smartroutine.todoitem.exception.TodoNameInvalidException;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -86,6 +87,12 @@ public class TodoItem extends BaseEntity {
         else if(this.status == TodoStatus.IN_PROGRESS) this.status = TodoStatus.PENDING;
         else if(this.status == TodoStatus.PENDING) this.status = TodoStatus.COMPLETED;
         else if(this.status == TodoStatus.COMPLETED) this.status = TodoStatus.PENDING;
+    }
+
+    public void delete(){
+        if(this.getDeletedAt() != null) throw new TodoAlreadyDeletedException(todoId);
+
+        super.delete(userId);
     }
 
 }

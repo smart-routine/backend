@@ -1,5 +1,6 @@
 package com.smartroutine.todoitem.service;
 
+import com.smartroutine.todoitem.dto.TodoDeletedResponse;
 import com.smartroutine.todoitem.dto.TodoReadResponse;
 import com.smartroutine.todoitem.dto.TodoCreateRequest;
 import com.smartroutine.todoitem.dto.TodoCreateResponse;
@@ -80,5 +81,13 @@ public class TodoService {
         todoItem.updateStatus(status);
 
         return TodoMapper.todoStatusResponse(todoItem);
+    }
+
+    @Transactional
+    public TodoDeletedResponse deleteTodo(UUID todoId, UUID userId){
+        TodoItem todoItem = getTodo(todoId, userId);
+        todoItem.delete();
+        
+        return new TodoDeletedResponse(todoId, userId, "success", todoItem.getDeletedAt(), todoItem.getDeletedBy());
     }
 }
