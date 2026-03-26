@@ -12,10 +12,10 @@ public record TodoCreateResponse(
     UUID goalId,
     Integer duration,
     TodoStatus status,
-    LocalDate scheduledStartAt,
-    LocalDate scheduledEndAt,
+    LocalDateTime scheduledStartAt,
+    LocalDateTime scheduledEndAt,
     Boolean isAi,
-    LocalDateTime createAt,
+    LocalDateTime createdAt,
     UUID createdBy
 ) {
 }

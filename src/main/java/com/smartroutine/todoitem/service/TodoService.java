@@ -14,6 +14,7 @@ import com.smartroutine.todoitem.exception.TodoNotFoundException;
 import com.smartroutine.todoitem.mapper.TodoMapper;
 import com.smartroutine.todoitem.repository.TodoRepository;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -31,15 +32,23 @@ public class TodoService {
             .orElseThrow(() -> new TodoNotFoundException(todoId));
     }
 
+    private void validDate(LocalDateTime startDate, LocalDateTime endDate){
+        if(startDate != null) {
+            if(endDate != null)
+            {
+                if(startDate.isAfter(endDate)) {
+                    throw new TodoDateInvalidException(startDate, endDate);
+                }
+            }
+            else if(startDate.isBefore(LocalDateTime.now())) throw new TodoDateInvalidException(startDate);
+        }
+    }
+
     @Transactional
     public TodoCreateResponse createTodo(UUID userId, TodoCreateRequest request){
         TodoItem todo = TodoMapper.toEntity(userId, request);
 
-        if(request.getScheduledStartAt() != null && request.getScheduledEndAt() != null) {
-            if(request.getScheduledStartAt().isAfter(request.getScheduledEndAt())) {
-                throw new TodoDateInvalidException(request.getScheduledStartAt(), request.getScheduledEndAt());
-            }
-        }
+        validDate(request.getScheduledStartAt(),  request.getScheduledEndAt());
 
         TodoItem saveTodo = todoRepository.save(todo);
         return TodoMapper.toCreateResponse(saveTodo);
@@ -47,7 +56,7 @@ public class TodoService {
 
     @Transactional(readOnly = true)
     public List<TodoReadResponse> getTodosByDate(UUID userId, LocalDate date){
-        List<TodoItem> todoItems = todoRepository.findAllByUserIdAndScheduledStartAt(userId, date);
+        List<TodoItem> todoItems = todoRepository.findAllByUserIdAndScheduledStartAt(userId, date);//***
 
         return todoItems
             .stream()
@@ -68,8 +77,8 @@ public class TodoService {
     @Transactional
     public TodoUpdateResponse updateTodo(UUID todoId, UUID userId, TodoUpdateRequest request){
         TodoItem todoItem = getTodo(todoId, userId);
-
-        todoItem.updateTodo(userId, request.getTodoName(), request.getDuration(), request.getScheduledStartAt());
+        validDate(request.getScheduledStartAt(), request.getScheduledEndAt());
+        todoItem.updateTodo(userId, request.getTodoName(), request.getDuration(), request.getScheduledStartAt(), request.getScheduledEndAt());
 
         return TodoMapper.todoUpdateResponse(todoItem);
     }
@@ -86,6 +95,7 @@ public class TodoService {
     @Transactional
     public TodoDeletedResponse deleteTodo(UUID todoId, UUID userId){
         TodoItem todoItem = getTodo(todoId, userId);
+
         todoItem.delete();
         
         return new TodoDeletedResponse(todoId, userId, "success", todoItem.getDeletedAt(), todoItem.getDeletedBy());

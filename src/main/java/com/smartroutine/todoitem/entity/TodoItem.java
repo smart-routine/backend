@@ -2,14 +2,19 @@ package com.smartroutine.todoitem.entity;
 
 import com.smartroutine.common.entity.BaseEntity;
 import com.smartroutine.todoitem.exception.TodoAlreadyDeletedException;
+import com.smartroutine.todoitem.exception.TodoDateInvalidException;
 import com.smartroutine.todoitem.exception.TodoNameInvalidException;
+import com.smartroutine.todoitem.exception.TodoStatusValidException;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Size;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.UUID;
 import lombok.Builder;
 import lombok.Getter;
@@ -24,7 +29,7 @@ import org.hibernate.annotations.SQLRestriction;
 public class TodoItem extends BaseEntity {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID todoId;
 
     @Column(name = "todo_name", nullable = false)
@@ -40,21 +45,25 @@ public class TodoItem extends BaseEntity {
     @Column(name = "duration")
     private Integer duration;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     private TodoStatus  status;
 
+    @Column(name = "completed_at")
+    private LocalDateTime completedAt;
+
     @Column(name = "scheduled_start_at")
-    private LocalDate scheduledStartAt;
+    private LocalDateTime scheduledStartAt;
 
     @Column(name = "scheduled_end_at")
-    private LocalDate scheduledEndAt;
+    private LocalDateTime scheduledEndAt;
 
     @Column(name = "is_ai", nullable = false)
     private Boolean isAi;
 
     @Builder
     public TodoItem(UUID todoId, String todoName, UUID userId, UUID goalId, Integer duration,
-        TodoStatus status, LocalDate scheduledStartAt, LocalDate scheduledEndAt, Boolean isAi){
+        TodoStatus status, LocalDateTime scheduledStartAt, LocalDateTime scheduledEndAt, Boolean isAi){
         this.todoId = todoId;
 
         if(todoName == null || todoName.isBlank()){
@@ -65,28 +74,32 @@ public class TodoItem extends BaseEntity {
         this.userId = userId;
         this.goalId = goalId;
         this.duration = duration;
-        this.status = status != null ? status : TodoStatus.IN_PROGRESS;
+        this.status = status != null ? status : TodoStatus.PENDING;
         this.scheduledStartAt = scheduledStartAt;
         this.scheduledEndAt = scheduledEndAt;
-        this.isAi = isAi;
+        this.isAi = isAi != null ? isAi : false;
 
         super.create(userId);
     }
 
-    public void updateTodo(UUID userId, String todoName, Integer duration, LocalDate scheduledStartAt){
+    public void updateTodo(UUID userId, String todoName, Integer duration, LocalDateTime scheduledStartAt, LocalDateTime scheduledEndAt){
         if(todoName != null && !todoName.isBlank()) this.todoName = todoName;
         if(duration != null) this.duration = duration;
         if(scheduledStartAt != null) this.scheduledStartAt = scheduledStartAt;
+        if(scheduledEndAt != null) this.scheduledEndAt = scheduledEndAt;
 
         super.update(userId);
     }
 
     public void updateStatus(TodoStatus status){
-        if(status != null) this.status = status;
+        if(status == null)  throw new TodoStatusValidException();
 
-        else if(this.status == TodoStatus.IN_PROGRESS) this.status = TodoStatus.PENDING;
-        else if(this.status == TodoStatus.PENDING) this.status = TodoStatus.COMPLETED;
-        else if(this.status == TodoStatus.COMPLETED) this.status = TodoStatus.PENDING;
+        this.status = status;
+
+        if(status == TodoStatus.COMPLETED) this.completedAt = LocalDateTime.now();
+        else this.completedAt = null;
+
+        super.update(userId);
     }
 
     public void delete(){

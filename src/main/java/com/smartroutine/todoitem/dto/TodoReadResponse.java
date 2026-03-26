@@ -12,12 +12,13 @@ public record TodoReadResponse(
     UUID goalId,
     Integer duration,
     TodoStatus status,
-    LocalDate scheduledStartAt,
-    LocalDate scheduledEndAt,
+    LocalDateTime completedAt,
+    LocalDateTime scheduledStartAt,
+    LocalDateTime scheduledEndAt,
     Boolean isAi,
-    LocalDateTime createAt,
+    LocalDateTime createdAt,
     UUID createdBy,
-    LocalDateTime updateAt,
+    LocalDateTime updatedAt,
     UUID updatedBy
 ) {
 

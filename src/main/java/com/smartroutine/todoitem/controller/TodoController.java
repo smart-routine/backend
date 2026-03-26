@@ -4,6 +4,7 @@ import com.smartroutine.todoitem.dto.TodoDeletedResponse;
 import com.smartroutine.todoitem.dto.TodoReadResponse;
 import com.smartroutine.todoitem.dto.TodoCreateRequest;
 import com.smartroutine.todoitem.dto.TodoCreateResponse;
+import com.smartroutine.todoitem.dto.TodoStatusRequest;
 import com.smartroutine.todoitem.dto.TodoStatusResponse;
 import com.smartroutine.todoitem.dto.TodoUpdateRequest;
 import com.smartroutine.todoitem.dto.TodoUpdateResponse;
@@ -50,9 +51,9 @@ public class TodoController {
         return ResponseEntity.ok(responses);
     }
 
-    @GetMapping("/{goalId}")
+    @GetMapping
     public ResponseEntity<List<TodoReadResponse>> getTodosByGoalId(
-        @PathVariable UUID goalId
+        @RequestParam UUID goalId
     ){
         List<TodoReadResponse> responses = todoService.getTodosByGoal(TEST_USER_ID, goalId);
         return ResponseEntity.ok(responses);
@@ -71,9 +72,9 @@ public class TodoController {
     @PatchMapping("/{todoId}/status")
     public ResponseEntity<TodoStatusResponse> updateStatus(
         @PathVariable UUID todoId,
-        @RequestParam TodoStatus status
+        @RequestBody TodoStatusRequest request
     ){
-        TodoStatusResponse response = todoService.updateStatus(todoId, TEST_USER_ID, status);
+        TodoStatusResponse response = todoService.updateStatus(todoId, TEST_USER_ID, request.getStatus());
         return ResponseEntity.ok(response);
     }
 
