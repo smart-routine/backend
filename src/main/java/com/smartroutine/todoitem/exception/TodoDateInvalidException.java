@@ -1,6 +1,5 @@
 package com.smartroutine.todoitem.exception;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public class TodoDateInvalidException extends IllegalArgumentException {
@@ -10,6 +9,6 @@ public class TodoDateInvalidException extends IllegalArgumentException {
     }
 
     public TodoDateInvalidException(LocalDateTime startDate){
-        super("startDate cannot be before now");
+        super("startDate :" + startDate + "cannot be before now");
     }
 }

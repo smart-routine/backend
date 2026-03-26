@@ -1,7 +1,6 @@
 package com.smartroutine.todoitem.dto;
 
 import com.smartroutine.todoitem.entity.TodoStatus;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 

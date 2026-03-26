@@ -8,7 +8,6 @@ import com.smartroutine.todoitem.dto.TodoStatusRequest;
 import com.smartroutine.todoitem.dto.TodoStatusResponse;
 import com.smartroutine.todoitem.dto.TodoUpdateRequest;
 import com.smartroutine.todoitem.dto.TodoUpdateResponse;
-import com.smartroutine.todoitem.entity.TodoStatus;
 import com.smartroutine.todoitem.service.TodoService;
 import jakarta.validation.Valid;
 import java.time.LocalDate;

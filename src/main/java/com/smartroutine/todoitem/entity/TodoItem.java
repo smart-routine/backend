@@ -2,7 +2,6 @@ package com.smartroutine.todoitem.entity;
 
 import com.smartroutine.common.entity.BaseEntity;
 import com.smartroutine.todoitem.exception.TodoAlreadyDeletedException;
-import com.smartroutine.todoitem.exception.TodoDateInvalidException;
 import com.smartroutine.todoitem.exception.TodoNameInvalidException;
 import com.smartroutine.todoitem.exception.TodoStatusValidException;
 import jakarta.persistence.Column;

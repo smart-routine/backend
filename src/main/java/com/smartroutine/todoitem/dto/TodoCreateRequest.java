@@ -2,7 +2,6 @@ package com.smartroutine.todoitem.dto;
 
 import com.smartroutine.todoitem.entity.TodoStatus;
 import jakarta.validation.constraints.NotBlank;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 import lombok.Getter;
