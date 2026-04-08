@@ -33,26 +33,29 @@ public class TodoMapper {
     public static TodoReadResponse toReadResponse(TodoItem todoItem){
         return new TodoReadResponse(todoItem.getTodoId(), todoItem.getTodoName(),
             todoItem.getUserId(), todoItem.getGoalId(), todoItem.getDuration(),
-            todoItem.getStatus(), todoItem.getScheduledStartAt(), todoItem.getScheduledEndAt(),
+            todoItem.getStatus(), todoItem.getCompletedAt(),
+            todoItem.getScheduledStartAt(), todoItem.getScheduledEndAt(),
             todoItem.getIsAi(), todoItem.getCreatedAt(), todoItem.getCreatedBy(),
             todoItem.getUpdatedAt(), todoItem.getUpdatedBy());
     }
 
-    public static TodoUpdateResponse todoUpdateResponse(TodoItem todoItem){
+    public static TodoUpdateResponse toUpdateResponse(TodoItem todoItem){
         return new TodoUpdateResponse(
             todoItem.getTodoId(), todoItem.getTodoName(),
             todoItem.getUserId(), todoItem.getGoalId(), todoItem.getDuration(),
-            todoItem.getStatus(), todoItem.getScheduledStartAt(), todoItem.getScheduledEndAt(),
+            todoItem.getStatus(), todoItem.getCompletedAt(),
+            todoItem.getScheduledStartAt(), todoItem.getScheduledEndAt(),
             todoItem.getIsAi(), todoItem.getCreatedAt(), todoItem.getCreatedBy(),
             todoItem.getUpdatedAt(), todoItem.getUpdatedBy()
         );
     }
 
-    public static TodoStatusResponse todoStatusResponse(TodoItem todoItem){
+    public static TodoStatusResponse toStatusResponse(TodoItem todoItem){
         return new TodoStatusResponse(
             todoItem.getTodoId(), todoItem.getTodoName(),
             todoItem.getUserId(), todoItem.getGoalId(), todoItem.getDuration(),
-            todoItem.getStatus(), todoItem.getScheduledStartAt(), todoItem.getScheduledEndAt(),
+            todoItem.getStatus(), todoItem.getCompletedAt(),
+            todoItem.getScheduledStartAt(), todoItem.getScheduledEndAt(),
             todoItem.getIsAi(), todoItem.getCreatedAt(), todoItem.getCreatedBy(),
             todoItem.getUpdatedAt(), todoItem.getUpdatedBy()
         );

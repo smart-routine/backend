@@ -46,9 +46,9 @@ public class TodoService {
 
     @Transactional
     public TodoCreateResponse createTodo(UUID userId, TodoCreateRequest request){
-        TodoItem todo = TodoMapper.toEntity(userId, request);
-
         validDate(request.getScheduledStartAt(),  request.getScheduledEndAt());
+
+        TodoItem todo = TodoMapper.toEntity(userId, request);
 
         TodoItem saveTodo = todoRepository.save(todo);
         return TodoMapper.toCreateResponse(saveTodo);
@@ -56,7 +56,7 @@ public class TodoService {
 
     @Transactional(readOnly = true)
     public List<TodoReadResponse> getTodosByDate(UUID userId, LocalDate date){
-        List<TodoItem> todoItems = todoRepository.findAllByUserIdAndScheduledStartAt(userId, date);//***
+        List<TodoItem> todoItems = todoRepository.findAllByUserIdAndDate(userId, date);
 
         return todoItems
             .stream()
@@ -80,7 +80,7 @@ public class TodoService {
         validDate(request.getScheduledStartAt(), request.getScheduledEndAt());
         todoItem.updateTodo(userId, request.getTodoName(), request.getDuration(), request.getScheduledStartAt(), request.getScheduledEndAt());
 
-        return TodoMapper.todoUpdateResponse(todoItem);
+        return TodoMapper.toUpdateResponse(todoItem);
     }
 
     @Transactional
@@ -89,7 +89,7 @@ public class TodoService {
 
         todoItem.updateStatus(status);
 
-        return TodoMapper.todoStatusResponse(todoItem);
+        return TodoMapper.toStatusResponse(todoItem);
     }
 
     @Transactional

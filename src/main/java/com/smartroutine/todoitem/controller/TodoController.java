@@ -42,7 +42,7 @@ public class TodoController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    @GetMapping
+    @GetMapping("/by-date")
     public ResponseEntity<List<TodoReadResponse>> getTodosByDate(
         @RequestParam LocalDate date
     ){
@@ -50,7 +50,7 @@ public class TodoController {
         return ResponseEntity.ok(responses);
     }
 
-    @GetMapping
+    @GetMapping("/by-goal")
     public ResponseEntity<List<TodoReadResponse>> getTodosByGoalId(
         @RequestParam UUID goalId
     ){
@@ -71,7 +71,7 @@ public class TodoController {
     @PatchMapping("/{todoId}/status")
     public ResponseEntity<TodoStatusResponse> updateStatus(
         @PathVariable UUID todoId,
-        @RequestBody TodoStatusRequest request
+        @Valid @RequestBody TodoStatusRequest request
     ){
         TodoStatusResponse response = todoService.updateStatus(todoId, TEST_USER_ID, request.getStatus());
         return ResponseEntity.ok(response);
