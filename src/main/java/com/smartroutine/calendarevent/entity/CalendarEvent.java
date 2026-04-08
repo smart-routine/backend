@@ -1,5 +1,7 @@
 package com.smartroutine.calendarevent.entity;
 
+import com.smartroutine.calendarevent.exception.InvalidCalendarEventPeriodException;
+import com.smartroutine.calendarevent.exception.InvalidCalendarEventSourceException;
 import com.smartroutine.common.entity.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -13,11 +15,15 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 import lombok.AccessLevel;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLRestriction;
 
 @Entity
 @Table(name = "calendar_events")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Getter
+@SQLRestriction("deleted_at IS NULL")
 public class CalendarEvent extends BaseEntity {
 
     @Id
@@ -35,13 +41,13 @@ public class CalendarEvent extends BaseEntity {
     @Column(name = "todo_id")
     private UUID todoId;
 
-    @Column(name = "google_event_id", length = 200)
+    @Column(name = "google_event_id", length = 255)
     private String googleEventId;
 
     @Column(nullable = false, length = 100)
     private String title;
 
-    @Column(length = 200)
+    @Column(length = 255)
     private String description;
 
     @Column(nullable = false)
@@ -57,6 +63,7 @@ public class CalendarEvent extends BaseEntity {
     @Builder
     public CalendarEvent(UUID userId, EventSource eventSource, UUID todoId, String googleEventId, String title, String description, EventColor color, LocalDateTime startAt, LocalDateTime endAt){
         validatePeriod(startAt, endAt);
+        validateEventSource(eventSource, todoId, googleEventId);
 
         this.userId = userId;
         this.eventSource = eventSource;
@@ -73,7 +80,19 @@ public class CalendarEvent extends BaseEntity {
 
     private void validatePeriod(LocalDateTime startAt, LocalDateTime endAt) {
         if(!startAt.isBefore(endAt)) {
-            throw new IllegalArgumentException("startAt must be before endAt");
+            throw new InvalidCalendarEventPeriodException(startAt, endAt);
+        }
+    }
+
+    private void validateEventSource(EventSource eventSource, UUID todoId, String googleEventId) {
+        if(eventSource == null) {
+            throw new InvalidCalendarEventSourceException("eventSource must not be null");
+        }
+        else if(eventSource == EventSource.TODO){
+            if(todoId == null) throw new InvalidCalendarEventSourceException("todoId must not be null");
+        }
+        else if(eventSource == EventSource.GOOGLE){
+            if(googleEventId == null) throw new InvalidCalendarEventSourceException("googleEventId must not be null");
         }
     }
 
