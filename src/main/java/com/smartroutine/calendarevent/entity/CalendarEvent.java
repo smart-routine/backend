@@ -1,5 +1,6 @@
 package com.smartroutine.calendarevent.entity;
 
+import com.smartroutine.calendarevent.exception.CalendarEventAlreadyDeletedException;
 import com.smartroutine.calendarevent.exception.InvalidCalendarEventPeriodException;
 import com.smartroutine.calendarevent.exception.InvalidCalendarEventSourceException;
 import com.smartroutine.common.entity.BaseEntity;
@@ -90,10 +91,38 @@ public class CalendarEvent extends BaseEntity {
         }
         else if(eventSource == EventSource.TODO){
             if(todoId == null) throw new InvalidCalendarEventSourceException("todoId must not be null");
+            if(googleEventId != null && !googleEventId.isBlank()) throw new  InvalidCalendarEventSourceException(eventSource, ", googleEventId must be null");
         }
         else if(eventSource == EventSource.GOOGLE){
-            if(googleEventId == null) throw new InvalidCalendarEventSourceException("googleEventId must not be null");
+            if(googleEventId == null || googleEventId.isBlank()) throw new InvalidCalendarEventSourceException("googleEventId must not be null");
+            if(todoId != null) throw new InvalidCalendarEventSourceException(eventSource, ", todoId must be null");
+        }
+        else {
+            if(todoId != null || googleEventId != null) throw new InvalidCalendarEventSourceException(eventSource, ", todoId and googleEventId must be null");
         }
     }
 
+    public void update(UUID userId, String title, String description, EventColor color, LocalDateTime startAt, LocalDateTime endAt) {
+
+        if(title != null) this.title = title;
+        if(description != null) this.description = description;
+        if(color != null) this.color = color;
+
+        LocalDateTime newStartAt = (startAt != null) ? startAt : this.startAt;
+        LocalDateTime newEndAt = (endAt != null) ? endAt : this.endAt;
+
+        validatePeriod(newStartAt, newEndAt);
+        this.startAt = newStartAt;
+        this.endAt = newEndAt;
+
+        super.update(userId);
+    }
+
+    public void delete() {
+        if(this.getDeletedAt() != null) {
+            throw new CalendarEventAlreadyDeletedException(eventId);
+        }
+
+        super.delete(userId);
+    }
 }
