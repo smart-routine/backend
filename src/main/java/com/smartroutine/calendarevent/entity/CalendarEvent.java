@@ -48,7 +48,7 @@ public class CalendarEvent extends BaseEntity {
     @Column(nullable = false, length = 100)
     private String title;
 
-    @Column(length = 255)
+    @Column
     private String description;
 
     @Column(nullable = false)
