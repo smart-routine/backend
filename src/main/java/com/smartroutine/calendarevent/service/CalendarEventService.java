@@ -40,7 +40,6 @@ public class CalendarEventService {
         return CalendarEventMapper.toCreateResponse(saveCalendarEvent);
     }
 
-    @Transactional(readOnly = true)
     public List<CalendarEventReadResponse> readCalendarEventsByPeriod(UUID userId, LocalDateTime startDate, LocalDateTime endDate) {
         if(startDate == null || endDate == null) {
             throw new InvalidCalendarEventPeriodException();
@@ -56,7 +55,6 @@ public class CalendarEventService {
         return calendarEvents.stream().map(CalendarEventMapper::toReadResponse).toList();
     }
 
-    @Transactional(readOnly = true)
     public List<CalendarEventReadResponse> readCalendarEventsByTargetDate(UUID userId, LocalDate targetDate) {
         if(targetDate == null) {
             throw new InvalidCalendarEventPeriodException("targetDate is null");
@@ -70,7 +68,6 @@ public class CalendarEventService {
         return calendarEvents.stream().map(CalendarEventMapper::toReadResponse).toList();
     }
 
-    @Transactional(readOnly = true)
     public CalendarEventReadResponse readCalendarEventDetail(UUID userId, UUID eventId) {
 
         CalendarEvent calendarEvent = getCalendarEvent(eventId, userId);

@@ -45,7 +45,6 @@ public class CategoryService {
         return CategoryMapper.toCreateResponse(savedCategory);
     }
 
-    @Transactional(readOnly = true)
     public List<CategoryReadResponse> readCategories(UUID userId) {
         return categoryRepository.findAllByUserIdOrderByIdAsc(userId)
             .stream()
@@ -53,7 +52,6 @@ public class CategoryService {
             .toList();
     }
 
-    @Transactional(readOnly = true)
     public CategoryReadResponse readCategory(UUID id, UUID userId) {
 
         Category category = getCategory(id, userId);

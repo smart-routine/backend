@@ -42,7 +42,6 @@ public class GoalService {
         return GoalMapper.toCreateResponse(saveGoal);
     }
 
-    @Transactional(readOnly = true)
     public List<GoalReadResponse> readGoals(UUID userId) {
         List<Goal> goals = goalRepository.findAllByUserId(userId);
 
@@ -52,7 +51,6 @@ public class GoalService {
             .toList();
     }
 
-    @Transactional(readOnly = true)
     public GoalReadResponse readGoal(UUID goalId) {
         Goal goal = getGoal(goalId);
 
