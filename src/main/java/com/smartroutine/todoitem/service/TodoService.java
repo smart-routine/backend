@@ -54,7 +54,6 @@ public class TodoService {
         return TodoMapper.toCreateResponse(saveTodo);
     }
 
-    @Transactional(readOnly = true)
     public List<TodoReadResponse> getTodosByDate(UUID userId, LocalDate date){
         List<TodoItem> todoItems = todoRepository.findAllByUserIdAndDate(userId, date);
 
@@ -64,7 +63,6 @@ public class TodoService {
             .toList();
     }
 
-    @Transactional(readOnly = true)
     public List<TodoReadResponse> getTodosByGoal(UUID userId, UUID goalId){
         List<TodoItem> todoItems = todoRepository.findAllByUserIdAndGoalId(userId,goalId);
 
