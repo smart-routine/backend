@@ -49,6 +49,15 @@ public class User{
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    @Column(length = 2000)
+    private String googleAccessToken;
+
+    @Column(length = 2000)
+    private String googleRefreshToken;
+
+    @Column
+    private LocalDateTime googleTokenExpiresAt;
+
     @Column(name = "created_at", nullable = false)
     @CreatedDate
     private LocalDateTime createdAt;
@@ -61,6 +70,16 @@ public class User{
         this.name = name;
         this.profileImageUrl = profileImageUrl;
         this.role = (role == null) ? Role.USER : role;
+    }
+
+    public void updateGoogleToken(
+        String accessToken,
+        String refreshToken,
+        LocalDateTime expiresAt
+    ){
+        this.googleAccessToken = accessToken;
+        if(refreshToken != null) this.googleRefreshToken = refreshToken;
+        this.googleTokenExpiresAt = expiresAt;
     }
 
 }
