@@ -10,13 +10,13 @@ import java.util.UUID;
 
 public class CalendarEventMapper {
 
-    public static CalendarEvent toEntity(UUID userId, CalendarEventCreateRequest request) {
+    public static CalendarEvent toEntity(UUID userId, CalendarEventCreateRequest request, String googleEventId) {
         return  CalendarEvent.builder()
             .userId(userId)
             .eventSource(request.getEventSource())
             .title(request.getTitle())
             .description(request.getDescription())
-            .googleEventId(request.getGoogleEventId())
+            .googleEventId(googleEventId)
             .todoId(request.getTodoId())
             .color(request.getColor())
             .startAt(request.getStartAt())

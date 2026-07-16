@@ -17,9 +17,6 @@ public class CalendarEventCreateRequest {
 
     private UUID todoId;
 
-    @Size(max = 255)
-    private String googleEventId;
-
     @NotBlank
     @Size(min = 1, max = 100)
     private String title;
