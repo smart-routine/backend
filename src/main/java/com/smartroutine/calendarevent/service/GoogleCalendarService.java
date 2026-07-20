@@ -7,7 +7,6 @@ import com.smartroutine.calendarevent.dto.google.GoogleCalendarCreateResponse;
 import com.smartroutine.calendarevent.dto.google.GoogleCalendarDateTime;
 import com.smartroutine.calendarevent.dto.google.GoogleCalendarUpdateRequest;
 import com.smartroutine.calendarevent.exception.GoogleAccessToKenMissing;
-import com.smartroutine.calendarevent.exception.GoogleCalendarDeleteFailed;
 import com.smartroutine.calendarevent.exception.GoogleCalendarUpdateFailed;
 import com.smartroutine.calendarevent.exception.GoogleCalenderCreateFailed;
 import com.smartroutine.user.entity.User;

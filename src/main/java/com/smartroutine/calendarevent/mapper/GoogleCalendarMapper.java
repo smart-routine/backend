@@ -1,7 +1,6 @@
 package com.smartroutine.calendarevent.mapper;
 
 import com.smartroutine.calendarevent.dto.CalendarEventCreateRequest;
-import com.smartroutine.calendarevent.dto.CalendarEventUpdateRequest;
 import com.smartroutine.calendarevent.dto.google.GoogleCalendarCreateRequest;
 import com.smartroutine.calendarevent.dto.google.GoogleCalendarUpdateRequest;
 import com.smartroutine.calendarevent.entity.CalendarEvent;
