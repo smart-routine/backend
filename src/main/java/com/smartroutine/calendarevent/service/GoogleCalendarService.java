@@ -5,8 +5,11 @@ import com.smartroutine.calendarevent.dto.google.GoogleCalendarApiResponse;
 import com.smartroutine.calendarevent.dto.google.GoogleCalendarCreateRequest;
 import com.smartroutine.calendarevent.dto.google.GoogleCalendarCreateResponse;
 import com.smartroutine.calendarevent.dto.google.GoogleCalendarDateTime;
+import com.smartroutine.calendarevent.dto.google.GoogleCalendarUpdateRequest;
 import com.smartroutine.calendarevent.exception.GoogleAccessToKenMissing;
-import com.smartroutine.calendarevent.exception.GoogleCalenderCreateFiled;
+import com.smartroutine.calendarevent.exception.GoogleCalendarDeleteFailed;
+import com.smartroutine.calendarevent.exception.GoogleCalendarUpdateFailed;
+import com.smartroutine.calendarevent.exception.GoogleCalenderCreateFailed;
 import com.smartroutine.user.entity.User;
 import com.smartroutine.user.repository.UserRepository;
 import java.time.ZoneId;
@@ -31,7 +34,7 @@ public class GoogleCalendarService {
         User user = userRepository.findById(userId).orElseThrow();
 
         String accessToken = user.getGoogleAccessToken();
-        if (accessToken == null || accessToken.isEmpty()) {
+        if (accessToken == null || accessToken.isBlank()) {
             throw new GoogleAccessToKenMissing();
         }
 
@@ -58,9 +61,62 @@ public class GoogleCalendarService {
             .body(GoogleCalendarApiResponse.class);
 
         if(googleApiResponse == null || googleApiResponse.id() == null) {
-            throw new GoogleCalenderCreateFiled();
+            throw new GoogleCalenderCreateFailed();
         }
 
         return new GoogleCalendarCreateResponse(googleApiResponse.id(), googleApiResponse.status());
+    }
+
+
+    public void updateGoogleCalendar(UUID userId, GoogleCalendarUpdateRequest request) {
+
+        User user = userRepository.findById(userId).orElseThrow();
+
+        String accessToken = user.getGoogleAccessToken();
+        if (accessToken == null || accessToken.isBlank()) {
+            throw new GoogleAccessToKenMissing();
+        }
+
+        ZoneId zoneId = ZoneId.of("Asia/Seoul");
+        GoogleCalendarDateTime start = new GoogleCalendarDateTime(
+            request.getStartAt().atZone(zoneId).toOffsetDateTime(),"Asia/Seoul"
+        );
+        GoogleCalendarDateTime end = new GoogleCalendarDateTime(
+            request.getEndAt().atZone(zoneId).toOffsetDateTime(),"Asia/Seoul"
+        );
+
+        GoogleCalendarApiRequest googleCalendarApiRequest = new GoogleCalendarApiRequest(
+            request.getTitle(),
+            request.getDescription(),
+            start,
+            end
+        );
+
+        GoogleCalendarApiResponse googleApiResponse = restClient.patch()
+            .uri(GOOGLE_CALENDAR_EVENT_URL + "/{eventId}",
+                request.getGoogleEventId())
+            .headers(headers -> headers.setBearerAuth(accessToken))
+            .body(googleCalendarApiRequest)
+            .retrieve()
+            .body(GoogleCalendarApiResponse.class);
+
+        if(googleApiResponse == null || googleApiResponse.id() == null) {
+            throw new GoogleCalendarUpdateFailed();
+        }
+    }
+
+    public void deleteGoogleCalendar(UUID userId, String googleEventId) {
+        User user = userRepository.findById(userId).orElseThrow();
+
+        String accessToken = user.getGoogleAccessToken();
+        if (accessToken == null || accessToken.isBlank()) {
+            throw new GoogleAccessToKenMissing();
+        }
+
+        restClient.delete()
+            .uri(GOOGLE_CALENDAR_EVENT_URL + "/{eventId}", googleEventId)
+            .headers(headers -> headers.setBearerAuth(accessToken))
+            .retrieve()
+            .toBodilessEntity();
     }
 }

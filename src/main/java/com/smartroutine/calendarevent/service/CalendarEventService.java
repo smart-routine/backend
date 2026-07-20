@@ -8,6 +8,7 @@ import com.smartroutine.calendarevent.dto.CalendarEventUpdateRequest;
 import com.smartroutine.calendarevent.dto.CalendarEventUpdateResponse;
 import com.smartroutine.calendarevent.dto.google.GoogleCalendarCreateRequest;
 import com.smartroutine.calendarevent.dto.google.GoogleCalendarCreateResponse;
+import com.smartroutine.calendarevent.dto.google.GoogleCalendarUpdateRequest;
 import com.smartroutine.calendarevent.entity.CalendarEvent;
 import com.smartroutine.calendarevent.exception.CalendarEventNotFoundException;
 import com.smartroutine.calendarevent.exception.InvalidCalendarEventPeriodException;
@@ -90,6 +91,11 @@ public class CalendarEventService {
 
         calendarEvent.update(userId, request.getTitle(), request.getDescription(), request.getColor(), request.getStartAt(), request.getEndAt());
 
+        if(calendarEvent.getGoogleEventId() != null && !calendarEvent.getGoogleEventId().isBlank()) {
+            GoogleCalendarUpdateRequest googleCalendarUpdateRequest = GoogleCalendarMapper.toUpdateRequest(calendarEvent);
+            googleCalendarService.updateGoogleCalendar(userId, googleCalendarUpdateRequest);
+        }
+
         return CalendarEventMapper.toUpdateResponse(calendarEvent);
     }
 
@@ -97,6 +103,10 @@ public class CalendarEventService {
     public CalendarEventDeleteResponse deleteCalendarEvent(UUID userId, UUID eventId) {
 
         CalendarEvent calendarEvent = getCalendarEvent(eventId, userId);
+
+        if(calendarEvent.getGoogleEventId() != null && !calendarEvent.getGoogleEventId().isBlank()) {
+            googleCalendarService.deleteGoogleCalendar(userId, calendarEvent.getGoogleEventId());
+        }
 
         calendarEvent.delete();
 

@@ -5,6 +5,7 @@ import com.smartroutine.calendarevent.dto.CalendarEventCreateResponse;
 import com.smartroutine.calendarevent.dto.CalendarEventDeleteResponse;
 import com.smartroutine.calendarevent.dto.CalendarEventReadResponse;
 import com.smartroutine.calendarevent.dto.CalendarEventUpdateResponse;
+import com.smartroutine.calendarevent.dto.google.GoogleCalendarUpdateResponse;
 import com.smartroutine.calendarevent.entity.CalendarEvent;
 import java.util.UUID;
 
