@@ -6,10 +6,14 @@ import com.smartroutine.calendarevent.dto.CalendarEventDeleteResponse;
 import com.smartroutine.calendarevent.dto.CalendarEventReadResponse;
 import com.smartroutine.calendarevent.dto.CalendarEventUpdateRequest;
 import com.smartroutine.calendarevent.dto.CalendarEventUpdateResponse;
+import com.smartroutine.calendarevent.dto.google.GoogleCalendarCreateRequest;
+import com.smartroutine.calendarevent.dto.google.GoogleCalendarCreateResponse;
+import com.smartroutine.calendarevent.dto.google.GoogleCalendarUpdateRequest;
 import com.smartroutine.calendarevent.entity.CalendarEvent;
 import com.smartroutine.calendarevent.exception.CalendarEventNotFoundException;
 import com.smartroutine.calendarevent.exception.InvalidCalendarEventPeriodException;
 import com.smartroutine.calendarevent.mapper.CalendarEventMapper;
+import com.smartroutine.calendarevent.mapper.GoogleCalendarMapper;
 import com.smartroutine.calendarevent.repository.CalendarEventRepository;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -25,15 +29,20 @@ public class CalendarEventService {
 
     private final CalendarEventRepository calendarEventRepository;
 
+    private final GoogleCalendarService googleCalendarService;
+
     private CalendarEvent getCalendarEvent(UUID eventId, UUID userId) {
         return calendarEventRepository.findByEventIdAndUserId(eventId, userId)
             .orElseThrow(() -> new CalendarEventNotFoundException(eventId));
     }
 
     @Transactional
-    public CalendarEventCreateResponse createCalendarEvent(UUID UserId, CalendarEventCreateRequest request) {
+    public CalendarEventCreateResponse createCalendarEvent(UUID userId, CalendarEventCreateRequest request) {
 
-        CalendarEvent calendarEvent = CalendarEventMapper.toEntity(UserId, request);
+        GoogleCalendarCreateRequest googleCalendarCreateRequest = GoogleCalendarMapper.toCreateRequest(request);
+        GoogleCalendarCreateResponse googleCalendarResponse = googleCalendarService.createGoogleCalendar(userId, googleCalendarCreateRequest);
+
+        CalendarEvent calendarEvent = CalendarEventMapper.toEntity(userId, request, googleCalendarResponse.googleEventId());
 
         CalendarEvent saveCalendarEvent = calendarEventRepository.save(calendarEvent);
 
@@ -82,6 +91,11 @@ public class CalendarEventService {
 
         calendarEvent.update(userId, request.getTitle(), request.getDescription(), request.getColor(), request.getStartAt(), request.getEndAt());
 
+        if(calendarEvent.getGoogleEventId() != null && !calendarEvent.getGoogleEventId().isBlank()) {
+            GoogleCalendarUpdateRequest googleCalendarUpdateRequest = GoogleCalendarMapper.toUpdateRequest(calendarEvent);
+            googleCalendarService.updateGoogleCalendar(userId, googleCalendarUpdateRequest);
+        }
+
         return CalendarEventMapper.toUpdateResponse(calendarEvent);
     }
 
@@ -89,6 +103,10 @@ public class CalendarEventService {
     public CalendarEventDeleteResponse deleteCalendarEvent(UUID userId, UUID eventId) {
 
         CalendarEvent calendarEvent = getCalendarEvent(eventId, userId);
+
+        if(calendarEvent.getGoogleEventId() != null && !calendarEvent.getGoogleEventId().isBlank()) {
+            googleCalendarService.deleteGoogleCalendar(userId, calendarEvent.getGoogleEventId());
+        }
 
         calendarEvent.delete();
 

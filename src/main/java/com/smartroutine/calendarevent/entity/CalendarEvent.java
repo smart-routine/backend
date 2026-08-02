@@ -64,7 +64,7 @@ public class CalendarEvent extends BaseEntity {
     @Builder
     public CalendarEvent(UUID userId, EventSource eventSource, UUID todoId, String googleEventId, String title, String description, EventColor color, LocalDateTime startAt, LocalDateTime endAt){
         validatePeriod(startAt, endAt);
-        validateEventSource(eventSource, todoId, googleEventId);
+        validateEventSource(eventSource, todoId);
 
         this.userId = userId;
         this.eventSource = eventSource;
@@ -85,20 +85,14 @@ public class CalendarEvent extends BaseEntity {
         }
     }
 
-    private void validateEventSource(EventSource eventSource, UUID todoId, String googleEventId) {
+    private void validateEventSource(EventSource eventSource, UUID todoId) {
         if(eventSource == null) {
             throw new InvalidCalendarEventSourceException("eventSource must not be null");
         }
         else if(eventSource == EventSource.TODO){
-            if(todoId == null) throw new InvalidCalendarEventSourceException("todoId must not be null");
-            if(googleEventId != null && !googleEventId.isBlank()) throw new  InvalidCalendarEventSourceException(eventSource, ", googleEventId must be null");
-        }
-        else if(eventSource == EventSource.GOOGLE){
-            if(googleEventId == null || googleEventId.isBlank()) throw new InvalidCalendarEventSourceException("googleEventId must not be null");
-            if(todoId != null) throw new InvalidCalendarEventSourceException(eventSource, ", todoId must be null");
-        }
+            if(todoId == null) throw new InvalidCalendarEventSourceException("todoId must not be null");}
         else {
-            if(todoId != null || googleEventId != null) throw new InvalidCalendarEventSourceException(eventSource, ", todoId and googleEventId must be null");
+            if(todoId != null) throw new InvalidCalendarEventSourceException(eventSource, ", todoId must be null");
         }
     }
 
